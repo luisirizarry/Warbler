@@ -1,0 +1,40 @@
+{% extends 'users/detail.html' %}
+{% block user_details %}
+  <div class="col-sm-9">
+    <div class="row">
+      <div class="col-lg-6 col-md-8 col-sm-12">
+        <ul class="list-group" id="messages">
+          {% if user.likes %}
+            {% for liked_warble in user.likes %}
+              <li class="list-group-item">
+                <a href="/messages/{{ liked_warble.id }}" class="message-link">
+                  <a href="/users/{{ liked_warble.user.id }}">
+                    <img src="{{ liked_warble.user.image_url }}" alt="" class="timeline-image">
+                  </a>
+                  <div class="message-area">
+                    <a href="/users/{{ liked_warble.user.id }}">@{{ liked_warble.user.username }}</a>
+                    <span class="text-muted">{{ liked_warble.timestamp.strftime('%d %B %Y') }}</span>
+                    <p>{{ liked_warble.text }}</p>
+                  </div>
+                </a>
+                {% if not g.user.is_owned_by(liked_warble.user) %}
+                <form method="POST" action="/users/remove_like/{{ liked_warble.id }}" id="messages-form">
+                  <button class="btn btn-sm {{'btn-primary' if liked_warble.is_liked_by(g.user) else 'btn-secondary'}}">
+                    <i class="fa fa-thumbs-up"></i>
+                  </button>
+                </form>
+                {% endif %}
+              </li>
+            {% endfor %}
+          {% else %}
+            <li class="list-group-item">
+              <div id="no-warbles">
+                <h4>No liked messages yet.</h4>    
+              </div>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </div>
+{% endblock %}
